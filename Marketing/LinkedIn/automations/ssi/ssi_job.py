@@ -1,20 +1,14 @@
 #!/usr/bin/env python3
 """
-SSI Parser Job.
-Scheduled to run monthly via GitHub Actions.
-
-Flow:
-  1. Fetch SSI from LinkedIn
-  2. Render as Obsidian markdown
-  3. Save to file
-  4. Commit to Git
-  5. Notify (if error)
+job.py — SSI Parser Job with screenshot input
 """
 
 import sys
 import subprocess
+import argparse
 from datetime import datetime
-from .io import fetch_ssi, save_markdown, save_json
+from pathlib import Path
+from .io import fetch_ssi_from_screenshot, save_markdown, save_json
 from .render import render_obsidian_markdown, get_filename
 from .config import LOG_FILE, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 
@@ -26,6 +20,7 @@ def log(message: str):
     
     with open(LOG_FILE, 'a', encoding='utf-8') as f:
         f.write(log_message + '\n')
+
 
 def notify_telegram(message: str):
     """Send error notification to Telegram (optional)"""
@@ -40,17 +35,30 @@ def notify_telegram(message: str):
             'text': f"❌ SSI Parser Error\n\n{message}"
         }, timeout=5)
     except:
-        pass  # Silent fail — не критично
+        pass  # Silent fail
 
-def main():
-    """Main job"""
+
+def main(screenshot_path: str = None):
+    """
+    Main job
+    
+    Args:
+        screenshot_path: Path to SSI screenshot (required)
+    """
     try:
-        log("🚀 Starting SSI Parser")
+        if not screenshot_path:
+            raise ValueError("Screenshot path is required")
         
-        # 1. Fetch
-        log("📥 Fetching SSI from LinkedIn...")
-        ssi_data = fetch_ssi()
-        log(f"✅ Fetched: SSI={ssi_data.ssi}/100")
+        if not Path(screenshot_path).exists():
+            raise FileNotFoundError(f"Screenshot not found: {screenshot_path}")
+        
+        log("🚀 Starting SSI Parser")
+        log(f"📸 Using screenshot: {screenshot_path}")
+        
+        # 1. Parse screenshot
+        log("🔍 Parsing screenshot with Claude Vision...")
+        ssi_data = fetch_ssi_from_screenshot(screenshot_path)
+        log(f"✅ Parsed: SSI={ssi_data.ssi}/100")
         
         # 2. Render
         log("🎨 Rendering Obsidian markdown...")
@@ -62,7 +70,7 @@ def main():
         log("💾 Saving to file...")
         save_markdown(filename, markdown)
         save_json(filename, ssi_data)
-        log(f"✅ Saved to {filename}")
+        log(f"✅ Saved")
         
         # 4. Git commit
         log("📝 Committing to Git...")
@@ -84,5 +92,10 @@ def main():
         notify_telegram(error_msg)
         return 1
 
+
 if __name__ == '__main__':
-    sys.exit(main())
+    parser = argparse.ArgumentParser(description='SSI Parser')
+    parser.add_argument('screenshot', help='Path to LinkedIn SSI screenshot')
+    args = parser.parse_args()
+    
+    sys.exit(main(args.screenshot))
