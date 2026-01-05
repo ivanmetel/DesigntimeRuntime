@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-job.py — SSI Parser Job with screenshot input
+job.py — SSI Parser Job with screenshot input and Google Drive upload
 """
 
 import sys
@@ -8,7 +8,7 @@ import subprocess
 import argparse
 from datetime import datetime
 from pathlib import Path
-from .io import fetch_ssi_from_screenshot, save_markdown, save_json
+from .io import fetch_ssi_from_screenshot, save_markdown, save_json, upload_to_google_drive
 from .render import render_obsidian_markdown, get_filename
 from .config import LOG_FILE, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 
@@ -66,19 +66,27 @@ def main(screenshot_path: str = None):
         filename = get_filename(ssi_data)
         log(f"✅ Rendered: {filename}")
         
-        # 3. Save
+        # 3. Save locally
         log("💾 Saving to file...")
-        save_markdown(filename, markdown)
+        local_path = save_markdown(filename, markdown)
         save_json(filename, ssi_data)
-        log(f"✅ Saved")
+        log(f"✅ Saved locally: {local_path}")
         
-        # 4. Git commit
+        # 4. Upload to Google Drive
+        log("☁️  Uploading to Google Drive...")
+        drive_file_id = upload_to_google_drive(local_path)
+        log(f"✅ Uploaded to Drive: {drive_file_id}")
+        
+        # 5. Git commit (log only, not the markdown file)
         log("📝 Committing to Git...")
+        with open(LOG_FILE, 'r', encoding='utf-8') as f:
+            log_content = f.read()
+        
         subprocess.run([
-            'git', 'add', f'Marketing/LinkedIn/data/ssi/{filename}'
+            'git', 'add', str(LOG_FILE)
         ], check=True)
         subprocess.run([
-            'git', 'commit', '-m', f'SSI: {filename} (SSI={ssi_data.ssi})'
+            'git', 'commit', '-m', f'SSI: executed successfully (SSI={ssi_data.ssi})'
         ], check=True)
         subprocess.run(['git', 'push'], check=True)
         log("✅ Committed & pushed")
