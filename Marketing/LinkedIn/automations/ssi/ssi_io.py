@@ -1,11 +1,16 @@
 """
-io.py — Fetch SSI from screenshot using Claude Vision
+io.py — Fetch SSI from screenshot using Claude Vision + Google Drive upload
 """
 
 import anthropic
 import base64
+import json
+import os
 from pathlib import Path
 from datetime import datetime
+from google.oauth2.service_account import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 from .model import SSIData
 from .config import DATA_DIR
 
@@ -92,7 +97,6 @@ Only return valid JSON, nothing else.
     )
     
     # Parse response
-    import json
     response_text = message.content[0].text.strip()
     
     # Remove markdown code blocks if present
@@ -138,7 +142,60 @@ def save_markdown(filename: str, content: str) -> str:
 
 def save_json(filename: str, data: SSIData) -> str:
     """Save SSI data as JSON (for backup)"""
-    import json
     filepath = DATA_DIR / filename.replace('.md', '.json')
     filepath.write_text(json.dumps(data.to_dict(), indent=2), encoding='utf-8')
     return str(filepath)
+
+
+def upload_to_google_drive(file_path: str, folder_id: str = None) -> str:
+    """
+    Upload file to Google Drive.
+    
+    Args:
+        file_path: Local path to file
+        folder_id: Google Drive folder ID (from env or config)
+        
+    Returns:
+        Google Drive file ID
+        
+    Raises:
+        ValueError: If credentials or folder_id missing
+    """
+    
+    # Get credentials from env
+    credentials_json = os.getenv('GOOGLE_DRIVE_CREDENTIALS')
+    if not credentials_json:
+        raise ValueError("GOOGLE_DRIVE_CREDENTIALS not set in env")
+    
+    if not folder_id:
+        folder_id = os.getenv('GOOGLE_DRIVE_FOLDER_ID')
+    
+    if not folder_id:
+        raise ValueError("GOOGLE_DRIVE_FOLDER_ID not set in env")
+    
+    # Parse credentials
+    credentials_dict = json.loads(credentials_json)
+    credentials = Credentials.from_service_account_info(
+        credentials_dict,
+        scopes=['https://www.googleapis.com/auth/drive']
+    )
+    
+    # Build Drive service
+    drive_service = build('drive', 'v3', credentials=credentials)
+    
+    # Upload file
+    file = Path(file_path)
+    media = MediaFileUpload(file_path, mimetype='text/markdown')
+    
+    file_metadata = {
+        'name': file.name,
+        'parents': [folder_id]
+    }
+    
+    uploaded_file = drive_service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields='id'
+    ).execute()
+    
+    return uploaded_file.get('id')
