@@ -1,0 +1,47 @@
+name: SSI Parser (Monthly)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  parse-ssi:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          cd Marketing/LinkedIn/automations/ssi
+          pip install -r ssi_requirements.txt
+      
+      - name: Take LinkedIn SSI screenshot
+        env:
+          LINKEDIN_STORAGE_STATE: ${{ secrets.LINKEDIN_STORAGE_STATE }}
+        run: |
+          cd Marketing/LinkedIn/automations/ssi
+          python3 ssi_screenshot.py
+      
+      - name: Run SSI Parser
+        env:
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          GOOGLE_DRIVE_CREDENTIALS: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
+          GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          cd Marketing/LinkedIn/automations/ssi
+          python3 ssi_job.py screenshot.png
+      
+      - name: Commit and push log
+        run: |
+          git config user.name "ssi-bot"
+          git config user.email "bot@designtimeruntime.dev"
+          git add Marketing/LinkedIn/data/ssi/logs/*.log
+          git commit -m "SSI: executed successfully" || echo "No changes to commit"
+          git push
