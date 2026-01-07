@@ -1,0 +1,188 @@
+{
+  "main": {
+    "id": "a5c6e7b1921f4383",
+    "type": "split",
+    "children": [
+      {
+        "id": "ffecbf41e8f15f8d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6459f3310fd2b5c9",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "Marketing/LinkedIn/data/ssi/photo_2026-01-06_10-12-40.jpg"
+              },
+              "icon": "lucide-image",
+              "title": "photo_2026-01-06_10-12-40"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "15d25d791bbf19e2",
+    "type": "split",
+    "children": [
+      {
+        "id": "932a69fae50bd141",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2877b84e08732ba5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "9aedfa93e5aea3eb",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "6767bef9ce9a2d58",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 241
+  },
+  "right": {
+    "id": "85d50451d8c72252",
+    "type": "split",
+    "children": [
+      {
+        "id": "81f979bb442a1ab8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1ce754783ff5b9d9",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "8658144f781f5cc8",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "9c9d78c6fada0452",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "5bb28a1afcbd3090",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "9dee179c4cc99f1a",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "2877b84e08732ba5",
+  "lastOpenFiles": [
+    "Marketing/LinkedIn/data/ssi/Week 2.md",
+    "Marketing/LinkedIn/data/ssi/ssi_config.py",
+    "Marketing/LinkedIn/automations/ssi/linkedin_state.json",
+    "Marketing/LinkedIn/automations/ssi/create_storage_state.py"
+  ]
+}
